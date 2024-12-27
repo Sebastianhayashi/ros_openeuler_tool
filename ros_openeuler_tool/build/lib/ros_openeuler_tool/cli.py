@@ -8,7 +8,6 @@ from ros_openeuler_tool.map_yum_rosdep import map_yum_to_rosdep_yaml
 from ros_openeuler_tool.update_yum_mapping import update_yum_and_mapping
 from ros_openeuler_tool.analyze_dependencies import analyze_dependencies
 from ros_openeuler_tool.list_missing import list_missing_packages
-from ros_openeuler_tool.update_rosdep_yaml import main_update_rosdep_yaml
 
 @click.group()
 def cli():
@@ -46,6 +45,11 @@ def map_yum_to_rosdep():
     map_yum_to_rosdep_yaml()
 
 @cli.command()
+def update_yum_and_mapping():
+    """自动更新 YUM 并同步 rosdep 映射文件"""
+    update_yum_and_mapping()
+
+@cli.command()
 def analyze_dependencies():
     """分析依赖关系并生成构建顺序"""
     analyze_dependencies()
@@ -54,16 +58,6 @@ def analyze_dependencies():
 def list_missing():
     """列出缺失的包和依赖"""
     list_missing_packages()
-
-@cli.command()
-@click.option('--base-yaml-url', required=True, help='base.yaml 的远程 URL')
-@click.option('--python-yaml-url', required=True, help='python.yaml 的远程 URL')
-@click.option('--output-base-yaml', default='updated_base.yaml', help='更新后的 base.yaml 文件名')
-@click.option('--output-python-yaml', default='updated_python.yaml', help='更新后的 python.yaml 文件名')
-@click.option('--threads', default=10, help='并发线程数（默认：10）')
-def update_rosdep_yaml(base_yaml_url, python_yaml_url, output_base_yaml, output_python_yaml, threads):
-    """更新 base.yaml 和 python.yaml，自动添加 openeuler 条目（DNF / PIP 方式）"""
-    main_update_rosdep_yaml(base_yaml_url, python_yaml_url, output_base_yaml, output_python_yaml, threads)
 
 if __name__ == '__main__':
     cli()

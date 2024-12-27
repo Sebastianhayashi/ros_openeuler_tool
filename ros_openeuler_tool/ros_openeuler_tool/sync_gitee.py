@@ -1,6 +1,5 @@
 # ros_openeuler_tool/sync_gitee.py
 
-import subprocess
 import os
 import re
 import shutil
