@@ -4,6 +4,8 @@ import os
 import re
 import subprocess
 import logging
+import tempfile
+import shutil
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -76,20 +78,31 @@ def process_package(pkg_dir):
         logging.info(f"目标目录 {target_dir} 已存在，删除旧目录。")
         subprocess.run(['rm', '-rf', target_dir], check=True)
 
-    # 压缩包目录
-    tar_file = f"{new_dir_name}.tar.gz"
-    subprocess.run(['tar', '-czvf', tar_file, '-C', BASE_DIR, pkg_name], check=True)
+    # 复制包目录到临时目录
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_pkg_dir = os.path.join(temp_dir, new_dir_name)
+        shutil.copytree(pkg_dir, temp_pkg_dir)
 
-    # 复制压缩文件到 SOURCES 目录
+        # 压缩临时目录中的包目录
+        tar_file = f"{new_dir_name}.tar.gz"
+        try:
+            subprocess.run(['tar', '-czvf', tar_file, '-C', temp_dir, new_dir_name], check=True)
+        except subprocess.CalledProcessError as e:
+            logging.error(f"压缩包 {tar_file} 失败: {e}")
+            os.chdir(BASE_DIR)
+            return
+
+    # 复制压缩文件到 SOURCES_DIR
     subprocess.run(['cp', tar_file, SOURCES_DIR], check=True)
 
-    # 清理临时文件
+    # 清理临时压缩文件
     subprocess.run(['rm', '-f', tar_file])
 
     logging.info(f"包 {pkg_name} 处理完成。")
 
 def process_ros_packages():
     setup_directories()
+    os.chdir(BASE_DIR)
     for item in os.listdir(BASE_DIR):
         pkg_dir = os.path.join(BASE_DIR, item)
         if os.path.isdir(pkg_dir):
