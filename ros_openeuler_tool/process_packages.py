@@ -1,6 +1,7 @@
-# ros_openeuler_tool/process_packages.py
+# ros_openeuler_tool/ros_openeuler_tool/process_packages.py
 
 import os
+import re
 import subprocess
 import logging
 
@@ -75,19 +76,15 @@ def process_package(pkg_dir):
         logging.info(f"目标目录 {target_dir} 已存在，删除旧目录。")
         subprocess.run(['rm', '-rf', target_dir], check=True)
 
-    # 复制包目录到新的目标目录
-    subprocess.run(['cp', '-r', pkg_dir, target_dir], check=True)
-
-    # 压缩重命名后的目录
+    # 压缩包目录
     tar_file = f"{new_dir_name}.tar.gz"
-    subprocess.run(['tar', '-czvf', tar_file, '-C', BASE_DIR, new_dir_name], check=True)
+    subprocess.run(['tar', '-czvf', tar_file, '-C', BASE_DIR, pkg_name], check=True)
 
     # 复制压缩文件到 SOURCES 目录
     subprocess.run(['cp', tar_file, SOURCES_DIR], check=True)
 
     # 清理临时文件
     subprocess.run(['rm', '-f', tar_file])
-    subprocess.run(['rm', '-rf', target_dir])
 
     logging.info(f"包 {pkg_name} 处理完成。")
 
