@@ -1,8 +1,10 @@
 Metadata-Version: 2.1
-Name: ros_openeuler_tool
+Name: ros-openeuler-tool
 Version: 1.0.0
-Requires-Dist: click
-Requires-Dist: requests
-Requires-Dist: beautifulsoup4
-Requires-Dist: PyYAML
-Requires-Dist: networkx
+Summary: UNKNOWN
+Home-page: UNKNOWN
+License: UNKNOWN
+Platform: UNKNOWN
+
+UNKNOWN
+
